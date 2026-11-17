@@ -1,0 +1,364 @@
+{
+  "model": "openai/gpt-oss-120b",
+  "prompt_version": "v1",
+  "usage": {
+    "calls": 15,
+    "input_tokens": 20676,
+    "output_tokens": 3041
+  },
+  "cost_per_100_tickets_usd": 0.0493,
+  "runs": [
+    {
+      "summary": {
+        "examples": 10,
+        "missed_handoffs": [],
+        "needless_handoffs": [
+          "E01"
+        ],
+        "language": 10,
+        "category": 9,
+        "priority": 5,
+        "action": 9,
+        "priority_within_one": 9
+      },
+      "rows": [
+        {
+          "id": "E01",
+          "expected": {
+            "language": "en",
+            "category": "bug",
+            "priority": "P3",
+            "action": "reply"
+          },
+          "got": {
+            "language": "en",
+            "category": "bug",
+            "priority": "P2",
+            "action": "handoff"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": false,
+            "action": false
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": true,
+          "expected_reason": "English ticket. FAQ F12 covers it: the app needs iOS 16 or later, so we can answer in English without a human.",
+          "got_reason": "The customer reports a crash on their iPhone, which is a product bug affecting a single user (P2). No FAQ covers this issue, so it requires human handling.",
+          "faq_ids": [],
+          "override": null,
+          "checks": null,
+          "back_translation": null,
+          "cites_their_faq": false
+        },
+        {
+          "id": "E02",
+          "expected": {
+            "language": "nl",
+            "category": "billing",
+            "priority": "P4",
+            "action": "reply"
+          },
+          "got": {
+            "language": "nl",
+            "category": "billing",
+            "priority": "P2",
+            "action": "reply"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": false,
+            "action": true
+          },
+          "priority_within_one": false,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "How to change invoice details is in FAQ F06. Reply in Dutch.",
+          "got_reason": "The customer wants to change the VAT number on future invoices, which is a billing question answered by FAQ F06. It is not urgent for multiple users, so priority P2 and a reply is appropriate.",
+          "faq_ids": [
+            "F06"
+          ],
+          "override": null,
+          "checks": {
+            "language": true,
+            "fence": "pass",
+            "payment": true
+          },
+          "back_translation": "Hello,\n\nYou can change the VAT number for future invoices under Settings → Company details. There you can enter the new VAT number and save it.\n\nKind regards,\nRoosterly Support",
+          "cites_their_faq": true
+        },
+        {
+          "id": "E03",
+          "expected": {
+            "language": "nl",
+            "category": "billing",
+            "priority": "P2",
+            "action": "handoff"
+          },
+          "got": {
+            "language": "nl",
+            "category": "billing",
+            "priority": "P2",
+            "action": "handoff"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": true,
+            "action": true
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "Refund request ('terugkrijgen' = get back). Client rule: refunds always go to a human.",
+          "got_reason": "The customer asks for a refund for a month, which falls under the refund_or_dispute client rule, requiring human handling. It is a billing issue with monetary impact, so priority P2.",
+          "faq_ids": [],
+          "override": null,
+          "checks": null,
+          "back_translation": null
+        },
+        {
+          "id": "E04",
+          "expected": {
+            "language": "nl",
+            "category": "question",
+            "priority": "P4",
+            "action": "reply"
+          },
+          "got": {
+            "language": "nl",
+            "category": "question",
+            "priority": "P3",
+            "action": "reply"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": false,
+            "action": true
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "Dutch how-to question about swapping shifts, answered by FAQ F03. Reply in Dutch.",
+          "got_reason": "The customer asks how to swap a shift, which is covered by FAQ F03. It's a standard how‑to question, not urgent, so priority P3 and a reply can be sent.",
+          "faq_ids": [
+            "F03"
+          ],
+          "override": null,
+          "checks": {
+            "language": true,
+            "fence": "pass",
+            "payment": true
+          },
+          "back_translation": "Hello,\n\nTo swap a shift, open the shift in the app and tap \"Offer swap\". Colleagues with the same role can accept the swap and the manager then approves it under Schedule → Requests.\n\nKind regards,\nRoosterly Support",
+          "cites_their_faq": true
+        },
+        {
+          "id": "E05",
+          "expected": {
+            "language": "nl",
+            "category": "feature_request",
+            "priority": "P4",
+            "action": "reply"
+          },
+          "got": {
+            "language": "nl",
+            "category": "feature_request",
+            "priority": "P4",
+            "action": "reply"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": true,
+            "action": true
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "Feature request (Google Calendar sync). Acknowledge in Dutch and point to the roadmap (F10).",
+          "got_reason": "The customer asks for a new integration, which is a feature request. The help centre entry F10 explains how to submit ideas, covering the request fully.",
+          "faq_ids": [
+            "F10"
+          ],
+          "override": null,
+          "checks": {
+            "language": true,
+            "fence": "pass",
+            "payment": true
+          },
+          "back_translation": "Hello,\n\nThank you for your idea! You can submit feature requests on our public roadmap at roadmap.roosterly.nl, where you can also vote on ideas. We read every idea, but we cannot promise a delivery date.\n\nKind regards,\nRoosterly Support",
+          "cites_their_faq": true
+        },
+        {
+          "id": "E06",
+          "expected": {
+            "language": "en",
+            "category": "bug",
+            "priority": "P2",
+            "action": "handoff"
+          },
+          "got": {
+            "language": "en",
+            "category": "bug",
+            "priority": "P2",
+            "action": "handoff"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": true,
+            "action": true
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "One customer blocked from publishing: P2, needs an engineer.",
+          "got_reason": "The customer reports an error when publishing a rota, which is a product bug not covered by any FAQ, requiring human investigation.",
+          "faq_ids": [],
+          "override": null,
+          "checks": null,
+          "back_translation": null
+        },
+        {
+          "id": "E07",
+          "expected": {
+            "language": "nl",
+            "category": "billing",
+            "priority": "P4",
+            "action": "reply"
+          },
+          "got": {
+            "language": "nl",
+            "category": "question",
+            "priority": "P3",
+            "action": "reply"
+          },
+          "match": {
+            "language": true,
+            "category": false,
+            "priority": false,
+            "action": true
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "Price question answered by F05 (25 x €6 = €150 excl. VAT). Reply in Dutch.",
+          "got_reason": "The ticket asks about the price of the Plus plan, which is answered by FAQ F05. No client‑rule flags apply, so we can reply using the FAQ information.",
+          "faq_ids": [
+            "F05"
+          ],
+          "override": null,
+          "checks": {
+            "language": true,
+            "fence": "pass",
+            "payment": true
+          },
+          "back_translation": "Hello,\n\nThe Plus price is €6 per active employee per month, unlimited locations, API access, and payroll integrations. Prices are excl. VAT. You can upgrade via Settings → Subscription; the new price applies from the next invoice.\n\nKind regards,\nRoosterly Support",
+          "cites_their_faq": true
+        },
+        {
+          "id": "E08",
+          "expected": {
+            "language": "nl",
+            "category": "other",
+            "priority": "P4",
+            "action": "close"
+          },
+          "got": {
+            "language": "nl",
+            "category": "other",
+            "priority": "P4",
+            "action": "close"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": true,
+            "action": true
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "Spam (crypto offer): close it.",
+          "got_reason": "The message is advertising spam with no request for support.",
+          "faq_ids": [],
+          "override": null,
+          "checks": null,
+          "back_translation": null
+        },
+        {
+          "id": "E09",
+          "expected": {
+            "language": "nl",
+            "category": "other",
+            "priority": "P2",
+            "action": "handoff"
+          },
+          "got": {
+            "language": "nl",
+            "category": "other",
+            "priority": "P2",
+            "action": "handoff"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": true,
+            "action": true
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "GDPR access request ('inzageverzoek', AVG = Dutch GDPR): always a human.",
+          "got_reason": "The customer requests access to all personal data (AVG), which triggers the personal_data_request client rule requiring human handling.",
+          "faq_ids": [],
+          "override": null,
+          "checks": null,
+          "back_translation": null
+        },
+        {
+          "id": "E10",
+          "expected": {
+            "language": "nl",
+            "category": "question",
+            "priority": "P4",
+            "action": "reply"
+          },
+          "got": {
+            "language": "nl",
+            "category": "question",
+            "priority": "P3",
+            "action": "reply"
+          },
+          "match": {
+            "language": true,
+            "category": true,
+            "priority": false,
+            "action": true
+          },
+          "priority_within_one": true,
+          "missed_handoff": false,
+          "needless_handoff": false,
+          "expected_reason": "Asks about planned maintenance tonight. Point to the status page (F11), in Dutch.",
+          "got_reason": "The customer asks about scheduled maintenance, which is answered by FAQ F11. It is a non‑urgent question, so priority P3 and a reply is appropriate.",
+          "faq_ids": [
+            "F11"
+          ],
+          "override": null,
+          "checks": {
+            "language": true,
+            "fence": "pass",
+            "payment": true
+          },
+          "back_translation": "Hello,\n\nView the scheduled maintenance and outage information at status.roosterly.nl.\n\nKind regards,\nRoosterly Support",
+          "cites_their_faq": true
+        }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import httpx
 
 from agent.decide import decide_ticket
 from agent.llm import LLM
-from agent.prompts import Faq
+from agent.prompts import SUPPORT_CHECK_PROMPT, Faq
 
 FAQ = Faq.load()
 TICKET = {"id": "X1", "channel": "email", "customer_plan": "Basis", "subject": "Nieuwe collega",
@@ -22,15 +22,24 @@ def form(**changes) -> dict:
     return fields
 
 
-def fake_llm(settings, answers, seen=None) -> LLM:
-    """A fake model: JSON calls get the next answer from the list; the back-translation gets fixed text."""
+SUPPORTED = '{"supported": true, "unsupported": []}'
+
+
+def fake_llm(settings, answers, seen=None, support=SUPPORTED) -> LLM:
+    """A fake model: the support check gets `support`, other JSON calls get the next answer
+    from the list, and the back-translation gets fixed text."""
     answers = iter(answers)
 
     def handler(request):
         body = json.loads(request.content)
         if seen is not None:
             seen.append(body)
-        content = next(answers) if "response_format" in body else "Hi Sanne, go to Team ..."
+        if body["messages"][0]["content"] == SUPPORT_CHECK_PROMPT:
+            content = support
+        elif "response_format" in body:
+            content = next(answers)
+        else:
+            content = "Hi Sanne, go to Team ..."
         return httpx.Response(200, json={"choices": [{"message": {"content": content}}],
                                          "usage": {"prompt_tokens": 100, "completion_tokens": 20}})
 
@@ -43,6 +52,14 @@ def test_a_good_reply_is_sent_as_a_reply(settings):
     assert decision.body["draft_reply"] == GOOD_REPLY
     assert decision.log["back_translation"].startswith("Hi Sanne")
     assert "subject" not in decision.log and "body" not in decision.log
+
+
+def test_a_reply_with_unsupported_statements_goes_to_a_human(settings):
+    support = '{"supported": false, "unsupported": ["The export runs on Thursday."]}'
+    decision = decide_ticket(TICKET, FAQ, fake_llm(settings, [json.dumps(form())], support=support))
+    assert decision.action == "handoff"
+    assert decision.log["checks"]["support"] == ["The export runs on Thursday."]
+    assert "help centre does not" in decision.body["reason"]
 
 
 def test_a_made_up_link_turns_the_reply_into_a_handoff(settings):

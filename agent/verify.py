@@ -6,8 +6,8 @@ import re
 from dataclasses import dataclass
 
 from agent import language
-from agent.llm import LLM, Usage
-from agent.prompts import BACK_TRANSLATION_PROMPT
+from agent.llm import LLM, ModelFailed, Usage
+from agent.prompts import BACK_TRANSLATION_PROMPT, SUPPORT_CHECK_PROMPT, SupportCheck
 from agent.redact import mask
 
 _EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
@@ -28,11 +28,8 @@ def _products(faq_numbers: set[str], ticket_numbers: set[str]) -> set[str]:
     products = set()
     for a in faq_numbers:
         for b in ticket_numbers:
-            try:
-                value = float(a.replace(",", ".")) * float(b.replace(",", "."))
-                products.add(str(int(value)) if value.is_integer() else f"{value:.2f}")
-            except ValueError:
-                continue
+            value = float(a.replace(",", ".")) * float(b.replace(",", "."))
+            products.add(str(int(value)) if value.is_integer() else f"{value:.2f}")
     return products
 
 
@@ -100,3 +97,18 @@ def check_reply(reply: str, expected_language: str, faq_text: str, ticket_text: 
 def back_translate(llm: LLM, reply: str, usage: Usage) -> str:
     """A separate model call that sees only the reply, so every reply can be read in English."""
     return llm.text(BACK_TRANSLATION_PROMPT, reply, usage)
+
+
+def support_check(llm: LLM, english_reply: str, faq_text: str, usage: Usage) -> list[str]:
+    """A separate model call that compares the English reply with the cited FAQ entries.
+    Returns the statements the FAQ does not support. An empty list means the reply passed."""
+    if not english_reply.strip():
+        return ["the back-translation was empty"]
+    message = f"<help_centre>\n{faq_text}\n</help_centre>\n<reply>\n{english_reply}\n</reply>"
+    try:
+        result = llm.form(SUPPORT_CHECK_PROMPT, message, SupportCheck, usage)
+    except ModelFailed:
+        return ["the support check gave no valid answer"]
+    if result.supported and not result.unsupported:
+        return []
+    return result.unsupported or ["the support check found the reply unsupported"]

@@ -129,6 +129,25 @@ BACK_TRANSLATION_PROMPT = (
     "Translate the user's message into English. Keep the meaning exact, add nothing. Return only the translation."
 )
 
+SUPPORT_CHECK_PROMPT = """You check a support reply against the help-centre text it must be based on.
+The reply has been translated into English. List every statement in the reply that the help-centre text does not support.
+These are fine: a greeting, the customer's name, thanks, a sign-off, polite phrases, Dutch menu names with their English meaning.
+Ignore numbers and prices; another check covers them.
+These are NOT supported unless the help-centre text says them: extra steps, settings, dates, days, times, causes, advice and promises.
+Return only a JSON object: {"supported": true or false, "unsupported": ["each statement that is not supported"]}"""
+
+
+class SupportCheck(BaseModel):
+    """What the support check returns."""
+
+    supported: bool
+    unsupported: list[str] = []
+
+    @field_validator("unsupported", mode="before")
+    @classmethod
+    def _none_is_empty(cls, value: object) -> object:
+        return value or []
+
 _TICKET_TAG = re.compile(r"<\s*/?\s*ticket\s*>", re.IGNORECASE)
 
 

@@ -7,7 +7,7 @@ import logging
 from dataclasses import dataclass, field
 
 from agent import config, language, tripwires, verify
-from agent.llm import LLM, ModelFailed, ProviderUnavailable, Usage
+from agent.llm import LLM, ModelFailed, Usage
 from agent.policy import Decision, decide_action
 from agent.prompts import Faq, Form, system_prompt, ticket_message
 from agent.redact import assert_clean, mask
@@ -46,12 +46,17 @@ def decide_ticket(ticket: dict, faq: Faq, llm: LLM) -> TicketDecision:
     decision = decide_action(form, detected, trips, config.CONFIDENCE_THRESHOLD)
     checks, english = None, None
     if decision.action == "reply":
-        result = verify.check_reply(form.draft_reply, form.language, faq.text(form.faq_ids), text)
+        cited = faq.text(form.faq_ids)
+        result = verify.check_reply(form.draft_reply, form.language, cited, text)
         checks = result.as_log()
         if not result.passed:
             decision = Decision("handoff", "the reply failed its checks: " + result.failures())
         else:
-            english = _back_translation(llm, form.draft_reply, usage)
+            english = verify.back_translate(llm, form.draft_reply, usage)
+            unsupported = verify.support_check(llm, english, cited, usage)
+            checks["support"] = unsupported or "pass"
+            if unsupported:
+                decision = Decision("handoff", "the reply says things the help centre does not: " + "; ".join(unsupported))
 
     post = _post_body(form, decision, detected, facts)
     assert_clean(json.dumps(post, ensure_ascii=False))
@@ -120,14 +125,6 @@ def _model_failed(facts: dict, detected: str, usage: Usage) -> TicketDecision:
                   "llm": {"model": None, "prompt_version": config.PROMPT_VERSION, "calls": usage.calls,
                           "input_tokens": usage.input_tokens, "output_tokens": usage.output_tokens}}
     return TicketDecision("handoff", post, log_fields, usage)
-
-
-def _back_translation(llm: LLM, reply: str, usage: Usage) -> str | None:
-    try:
-        return verify.back_translate(llm, reply, usage)
-    except (ModelFailed, ProviderUnavailable) as error:  # the log loses the translation; the reply still goes
-        log.warning("Back-translation failed: %s", error)
-        return None
 
 
 def _llm_fields(llm: LLM, usage: Usage) -> dict:

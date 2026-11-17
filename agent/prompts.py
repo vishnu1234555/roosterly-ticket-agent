@@ -132,8 +132,8 @@ BACK_TRANSLATION_PROMPT = (
 SUPPORT_CHECK_PROMPT = """You check a support reply against the help-centre text it must be based on.
 The reply has been translated into English. List every statement in the reply that the help-centre text does not support.
 These are fine: a greeting, the customer's name, thanks, a sign-off, polite phrases, Dutch menu names with their English meaning.
-Ignore numbers and prices; another check covers them.
-These are NOT supported unless the help-centre text says them: extra steps, settings, dates, days, times, causes, advice and promises.
+Also fine: saying what the help centre says in other words, including the plain action it describes (for example entering a changed value and saving it), and a total that multiplies a help-centre price by the customer's own number (for example 25 employees x 6 euro = 150 euro).
+These are NOT supported unless the help-centre text says them: other steps, settings or features, dates, days, times, causes, advice and promises.
 Return only a JSON object: {"supported": true or false, "unsupported": ["each statement that is not supported"]}"""
 
 

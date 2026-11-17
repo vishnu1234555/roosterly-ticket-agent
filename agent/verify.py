@@ -67,6 +67,7 @@ class ReplyCheck:
     language_ok: bool
     fence_problems: list[str]
     payment_ok: bool
+    reply_language: str = "unknown"  # what the word count says the reply is written in
 
     @property
     def passed(self) -> bool:
@@ -83,14 +84,17 @@ class ReplyCheck:
         return ", ".join(failed)
 
     def as_log(self) -> dict:
-        return {"language": self.language_ok, "fence": self.fence_problems or "pass", "payment": self.payment_ok}
+        return {"language": self.language_ok, "reply_language": self.reply_language,
+                "fence": self.fence_problems or "pass", "payment": self.payment_ok}
 
 
 def check_reply(reply: str, expected_language: str, faq_text: str, ticket_text: str) -> ReplyCheck:
+    detected = language.detect(reply)
     return ReplyCheck(
-        language_ok=language.detect(reply) in ("unknown", expected_language),
+        language_ok=detected in ("unknown", expected_language),
         fence_problems=check_fence(reply, faq_text, ticket_text),
         payment_ok=not mask(reply)[1],
+        reply_language=detected,
     )
 
 

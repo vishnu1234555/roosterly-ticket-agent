@@ -83,3 +83,9 @@ def test_invalid_output_twice_goes_to_a_human(settings):
     decision = decide_ticket(TICKET, FAQ, fake_llm(settings, ["not json", "still not json"]))
     assert decision.action == "handoff"
     assert decision.usage.calls == 2
+
+
+def test_a_sure_word_count_decides_the_language_field(settings):
+    wrong = form(language="en", proposed_action="handoff", draft_reply="")
+    decision = decide_ticket(TICKET, FAQ, fake_llm(settings, [json.dumps(wrong)]))
+    assert decision.body["language"] == "nl"

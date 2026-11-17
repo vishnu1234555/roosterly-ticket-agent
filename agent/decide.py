@@ -74,10 +74,12 @@ def decide_ticket(ticket: dict, faq: Faq, llm: LLM) -> TicketDecision:
 
 def _post_body(form: Form, decision: Decision, detected: str, facts: dict) -> dict:
     """The JSON body for the helpdesk."""
-    if form.language != "other":
+    if detected != "unknown":  # the word count is sure, so it decides the language field
+        lang = detected
+    elif form.language != "other":
         lang = form.language
-    else:  # the API only takes nl, en or de: use the closest one, and the reason says so
-        lang = detected if detected != "unknown" else "en"
+    else:  # the API only takes nl, en or de: use the closest one
+        lang = "en"
     reason = form.reason.strip()
     if decision.override:
         reason = f"Changed to {decision.action} by a rule: {decision.override[:200]}. Model: {_first_sentence(reason)}"

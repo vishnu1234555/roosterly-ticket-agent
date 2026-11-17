@@ -19,6 +19,16 @@ class Decision:
     override: str = ""   # why code changed the model's proposal; empty if it did not
 
 
+RISK_TOPICS = ("security_incident", "legal_threat")
+
+
+def decide_priority(form: Form, tripwires: list[str]) -> str:
+    """The brief says P1 for a security or legal risk, so code sets it; otherwise the model's priority stands."""
+    if set(RISK_TOPICS) & (set(form.flags) | set(tripwires)):
+        return "P1"
+    return form.priority
+
+
 def decide_action(form: Form, detected_language: str, tripwires: list[str], threshold: float) -> Decision:
     """The rules, in order. The first one that matches wins."""
     proposed = form.proposed_action

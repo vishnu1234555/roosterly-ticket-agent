@@ -1,6 +1,6 @@
 import pytest
 
-from agent.policy import decide_action
+from agent.policy import decide_action, decide_priority
 from agent.prompts import Form
 
 
@@ -69,3 +69,12 @@ def test_unsure_cases_go_to_a_human(changes, detected):
 
 def test_unknown_language_check_is_no_disagreement():
     assert decide(form(), detected="unknown").action == "reply"
+
+
+def test_security_or_legal_risk_is_always_p1():
+    assert decide_priority(form(priority="P2", flags=["legal_threat"]), []) == "P1"
+    assert decide_priority(form(priority="P3"), ["security_incident"]) == "P1"
+
+
+def test_other_tickets_keep_the_model_priority():
+    assert decide_priority(form(priority="P4", flags=["refund_or_dispute"]), []) == "P4"

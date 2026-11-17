@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 
 from agent import config, language, tripwires, verify
 from agent.llm import LLM, ModelFailed, Usage
-from agent.policy import Decision, decide_action
+from agent.policy import Decision, decide_action, decide_priority
 from agent.prompts import Faq, Form, system_prompt, ticket_message
 from agent.redact import assert_clean, mask
 
@@ -58,6 +58,7 @@ def decide_ticket(ticket: dict, faq: Faq, llm: LLM) -> TicketDecision:
             if unsupported:
                 decision = Decision("handoff", "the reply says things the help centre does not: " + "; ".join(unsupported))
 
+    form.priority = decide_priority(form, trips)
     post = _post_body(form, decision, detected, facts)
     assert_clean(json.dumps(post, ensure_ascii=False))
     log_fields = {

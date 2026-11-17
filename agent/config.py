@@ -24,7 +24,7 @@ LLM_LONGEST_WAIT = 60.0   # a longer Retry-After means a daily limit: stop the r
 
 # Decisions
 CONFIDENCE_THRESHOLD = 0.75
-PROMPT_VERSION = "v4"
+PROMPT_VERSION = "v5"
 
 # Cost in USD per million tokens (Groq, openai/gpt-oss-120b). Check the price page before quoting.
 PRICE_INPUT_PER_M = 0.15

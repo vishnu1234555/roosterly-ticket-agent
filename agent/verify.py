@@ -22,6 +22,20 @@ def _numbers(text: str) -> set[str]:
     return {re.sub(r"[.,]0+$", "", number) for number in _NUMBER.findall(text)}
 
 
+def _products(faq_numbers: set[str], ticket_numbers: set[str]) -> set[str]:
+    """An FAQ number times a number from the customer's message, such as 6 x 25 = 150.
+    A reply may use these, so a correct total is not taken for a made-up number."""
+    products = set()
+    for a in faq_numbers:
+        for b in ticket_numbers:
+            try:
+                value = float(a.replace(",", ".")) * float(b.replace(",", "."))
+                products.add(str(int(value)) if value.is_integer() else f"{value:.2f}")
+            except ValueError:
+                continue
+    return products
+
+
 def _menu_steps(text: str) -> set[tuple[str, str]]:
     """Pairs of menu names joined by an arrow, such as ('instellingen', 'abonnement')."""
     return {(first.lower(), second.lower()) for first, second in _MENU_STEP.findall(text)}
@@ -42,7 +56,9 @@ def check_fence(reply: str, faq_text: str, ticket_text: str) -> list[str]:
         if link.lower() not in faq_lower:
             problems.append(f"link {link}")
     rest = _STEP_NUMBER.sub(" ", _LINK.sub(" ", rest))
-    for number in sorted(_numbers(rest) - _numbers(faq_text) - _numbers(ticket_text)):
+    faq_numbers, ticket_numbers = _numbers(faq_text), _numbers(ticket_text)
+    allowed = faq_numbers | ticket_numbers | _products(faq_numbers, ticket_numbers)
+    for number in sorted(_numbers(rest) - allowed):
         problems.append(f"number {number}")
     for first, second in sorted(_menu_steps(reply) - _menu_steps(faq_text)):
         problems.append(f"menu step {first} > {second}")

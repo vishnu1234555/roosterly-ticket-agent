@@ -38,6 +38,12 @@ def test_a_number_from_the_customer_is_allowed():
                        "We hebben 12 medewerkers.") == []
 
 
+def test_a_total_from_faq_price_times_customer_number_is_allowed():
+    prices = FAQ.text(["F05"])
+    assert check_fence("Voor 25 medewerkers kost Plus €150 per maand.", prices, "We hebben 25 medewerkers.") == []
+    assert check_fence("Voor 25 medewerkers kost Plus €175 per maand.", prices, "We hebben 25 medewerkers.") == ["number 175"]
+
+
 def test_step_numbers_are_ignored():
     reply = "1. Ga naar Instellingen → Abonnement.\n2. Klik op Facturen."
     assert check_fence(reply, INVOICES, "") == []

@@ -4,15 +4,18 @@ Reads Roosterly's open tickets from the Nordavo helpdesk and sends one decision 
 
 ## How to run
 
-Python 3.11+. Copy `.env.example` to `.env` and fill in the empty values.
+Python 3.11+. After cloning, copy `.env.example` to `.env` and fill in the empty values.
 
 ```
+git clone https://github.com/vishnu1234555/roosterly-ticket-agent.git
+cd roosterly-ticket-agent
+python -m venv .venv             # then .venv\Scripts\activate (Windows) or source .venv/bin/activate
 pip install -r requirements.txt
 python -m pytest                 # 77 tests, no network
 python -m eval.run_eval          # 10 labelled examples, sends nothing (--repeat 3 for the spread)
 python -m agent.run --dry-run    # decide and log, send nothing
 python -m agent.run              # handle every open ticket once
-python -m agent.reset            # re-open practice tickets; asks you to type RESET
+python -m agent.reset            # re-open practice tickets; asks you to type RESET, refuses while FINAL_RUN_DONE exists
 ```
 
 Logs: `logs/run-<date>_<time>.jsonl`, one line per ticket. Eval results: `eval/results/`.

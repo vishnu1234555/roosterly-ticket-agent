@@ -25,7 +25,7 @@ Logs: `logs/run-<date>_<time>.jsonl`, one line per ticket. Eval results: `eval/r
 
 **AI tools:** a Gemini prototype, built only to learn the API, was thrown away. This repo was built with Claude from a written plan (`CLAUDE.md` holds its rules). I ran every step against the real helpdesk, read the logs and decided each fix.
 
-**Assumptions:** unsure means handoff. Upgrade questions are answered from F05; cancel, downgrade or pause go to a human. A Basis customer asking for a Plus feature is told it is in Plus and how to upgrade. Feature requests are answered from F10. Spam, empty tickets and thank-yous are closed. An outage for many users goes to a human.
+**Assumptions:** the brief leaves "unsure" open, so I defined it in code: the agent counts itself unsure, and hands the ticket to a human, when the model's confidence is under 0.75, no FAQ entry answers the ticket, the FAQ answers only part of it, the language is not Dutch, English or German or the word-count check disagrees with the model, the model gives no valid form or no reply, or a reply check fails (reply language, fact fence, payment details, support check). Upgrade questions are answered from F05; cancel, downgrade or pause go to a human. A Basis customer asking for a Plus feature is told it is in Plus and how to upgrade. Feature requests are answered from F10. Spam, empty tickets and thank-yous are closed. An outage for many users goes to a human.
 
 ## Reliability
 

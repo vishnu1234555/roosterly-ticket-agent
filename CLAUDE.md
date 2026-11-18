@@ -14,6 +14,7 @@ Vishnu owns every decision and must be able to explain every line.
   so changing provider is a change in .env. No framework and no vector database:
   the help centre is about 1,000 tokens and fits in the prompt.
 - Keep it small: under about 800 lines of Python, tests not counted.
+- Result: the code ended at about 1,380 lines (`agent/` 1,239, `eval/` 140), over this target.
 
 ## Rules for the agent
 

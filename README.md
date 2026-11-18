@@ -39,12 +39,13 @@ Logs: `logs/run-<date>_<time>.jsonl`, one line per ticket. Eval results: `eval/r
 
 ## Eval and fix
 
-| | Baseline (prompt v1) | After fixes (v5, three runs) |
+| Out of 10 examples | Baseline (prompt v1) | After fixes (v5), runs 1-4 |
 |---|---|---|
-| Missed handoffs | 0 | 0, 0, 0 |
-| Language / category | 10, 9 | 10, 9 (all runs) |
-| Priority | 5/10 | 8, 8, 8 |
-| Action | 9/10 | 8, 9, 9 |
+| Missed handoffs | 0 | 0, 0, 0, 0 |
+| Language | 10 | 10, 10, 10, 10 |
+| Category | 9 | 9, 9, 9, 9 |
+| Priority | 5 | 8, 8, 8, 8 |
+| Action | 9 | 8, 9, 9, 9 |
 
 **The fix:** every priority miss was too urgent (four by one level, E02 by two), because the prompt said "if two levels fit, choose the more urgent one". I replaced it with Nordavo's pattern (an answered how-to is P4, one user's problem with a workaround is P3): priority went from 5/10 to 8-9/10. Ten examples is small (one ticket = 10 points) and the model varies between runs. Still missed: E01, an old-iOS crash that F12 answers.
 

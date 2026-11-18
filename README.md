@@ -43,7 +43,7 @@ Logs: `logs/run-<date>_<time>.jsonl`, one line per ticket. Eval results: `eval/r
 | Priority | 5/10 | 8, 8, 8 |
 | Action | 9/10 | 8, 9, 9 |
 
-**The fix:** every priority miss was one level too high, because the prompt said "if two levels fit, choose the more urgent one". I replaced it with Nordavo's pattern (an answered how-to is P4, one user's problem with a workaround is P3): priority went from 5/10 to 8-9/10. Ten examples is small (one ticket = 10 points) and the model varies between runs. Still missed: E01, an old-iOS crash that F12 answers.
+**The fix:** every priority miss was too urgent (four by one level, E02 by two), because the prompt said "if two levels fit, choose the more urgent one". I replaced it with Nordavo's pattern (an answered how-to is P4, one user's problem with a workaround is P3): priority went from 5/10 to 8-9/10. Ten examples is small (one ticket = 10 points) and the model varies between runs. Still missed: E01, an old-iOS crash that F12 answers.
 
 **Cost per 100 tickets** = (input tokens × $0.15 + output tokens × $0.60) / 1,000,000 / tickets × 100 (Groq, `openai/gpt-oss-120b`). Final run: (70,659 × 0.15 + 10,287 × 0.60) / 1,000,000 = $0.0168 for 30 tickets, **about $0.056 per 100**.
 
